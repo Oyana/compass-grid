@@ -70,12 +70,12 @@
 {
 	@for $it1 from 1 through $colSize
 	{
-		.compassHtmlColModelW#{$prefix}-#{$it1}
+		#{$compassGridCharr}compassHtmlColModelW#{$prefix}-#{$it1}
 		{
-			@extend .compassHtmlColModel;
+			@extend #{$compassGridCharr}compassHtmlColModel;
 			width: getColValue( $it1, $colSize, $gridSize );
 		}
-		.compassHtmlColModelH#{$prefix}-#{$it1}
+		#{$compassGridCharr}compassHtmlColModelH#{$prefix}-#{$it1}
 		{
 			padding-top: getColValue( $it1, $colSize, $gridSize );
 		}
@@ -85,14 +85,14 @@
 			{
 				.#{$prefix}-#{$it1}
 				{
-					@extend .compassHtmlColModelW#{$prefix}-#{$it1};
+					@extend #{$compassGridCharr}compassHtmlColModelW#{$prefix}-#{$it1};
 				}
 
 			}
 			.#{$prefix}-#{$it1}-#{$it2}
 			{
-				@extend .compassHtmlColModelW#{$prefix}-#{$it1};
-				@extend .compassHtmlColModelH#{$prefix}-#{$it2};
+				@extend #{$compassGridCharr}compassHtmlColModelW#{$prefix}-#{$it1};
+				@extend #{$compassGridCharr}compassHtmlColModelH#{$prefix}-#{$it2};
 			}
 			
 			@if $breakpoints != false
@@ -101,14 +101,14 @@
 				{				
 					@if $it2 == 1		
 					{
-						%#{$prefix}-#{$breakpoint}-#{$it1}
+						#{$compassGridCharr}#{$prefix}-#{$breakpoint}-#{$it1}
 						{
-							@extend .compassHtmlColModel;
+							@extend #{$compassGridCharr}compassHtmlColModel;
 						}
 					}
-					%#{$prefix}-#{$breakpoint}-#{$it1}-#{$it2}
+					#{$compassGridCharr}#{$prefix}-#{$breakpoint}-#{$it1}-#{$it2}
 					{
-						@extend .compassHtmlColModel;
+						@extend #{$compassGridCharr}compassHtmlColModel;
 					}
 				}
 			}
@@ -123,11 +123,11 @@
 			{
 				@for $it1 from 1 through $colSize
 				{
-					.compassHtmlColModelW#{$prefix}-#{$breakpoint}-#{$it1}
+					#{$compassGridCharr}compassHtmlColModelW#{$prefix}-#{$breakpoint}-#{$it1}
 					{
 						width: getColValue( $it1, $colSize, $gridSize );
 					}
-					.compassHtmlColModelH#{$prefix}-#{$breakpoint}-#{$it1}
+					#{$compassGridCharr}compassHtmlColModelH#{$prefix}-#{$breakpoint}-#{$it1}
 					{
 						padding-top: getColValue( $it1, $colSize, $gridSize );
 					}
@@ -136,15 +136,15 @@
 					{
 						@if $it2 == 1		
 						{
-							.#{$prefix}-#{$breakpoint}-#{$it1}
+							#{$compassGridCharr}#{$prefix}-#{$breakpoint}-#{$it1}
 							{
-								@extend .compassHtmlColModelW#{$prefix}-#{$breakpoint}-#{$it1};
+								@extend #{$compassGridCharr}compassHtmlColModelW#{$prefix}-#{$breakpoint}-#{$it1};
 							}
 						}
-						.#{$prefix}-#{$breakpoint}-#{$it1}-#{$it2}
+						#{$compassGridCharr}#{$prefix}-#{$breakpoint}-#{$it1}-#{$it2}
 						{
-							@extend .compassHtmlColModelW#{$prefix}-#{$breakpoint}-#{$it1};
-							@extend .compassHtmlColModelH#{$prefix}-#{$breakpoint}-#{$it2};
+							@extend #{$compassGridCharr}compassHtmlColModelW#{$prefix}-#{$breakpoint}-#{$it1};
+							@extend #{$compassGridCharr}compassHtmlColModelH#{$prefix}-#{$breakpoint}-#{$it2};
 						}
 					}
 				}
@@ -171,14 +171,25 @@ $gutters: flex !default;
 $breakpoints: mapDeepGet($compassGrid, "breakpoints");
 $breakpoints: false !default;
 
-.compassHtmlColModel{
+$outputMod: mapDeepGet($compassGrid, "outputMod");
+$outputMod: css !default;
+
+@if $outputMod == css
+{
+	$compassGridCharr: "."!global;
+}
+@else
+{
+	$compassGridCharr: "%"!global;
+}
+#{$compassGridCharr}compassHtmlColModel{
 	overflow: hidden;
 	position: relative;
 	display: block;
 	float: left;
 	max-width: 100%;
 	@include clearfix();
-	.content{
+	#{$compassGridCharr}content{
 		position: absolute;
 		top: 0;
 		left: 0;
@@ -188,5 +199,4 @@ $breakpoints: false !default;
 		margin: $gutters;
 	}
 }
-
 @include compassHtmlGrid( $gridName, $columns, $gridSize, $breakpoints );
