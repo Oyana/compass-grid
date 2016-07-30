@@ -1,0 +1,116 @@
+@function decimal-round ($number, $digits: 0, $mode: round) {
+	$n: 1;
+	// $number must be a number
+	@if type-of($number) != number
+	{
+		@warn '#{ $number } is not a number.';
+		@return $number;
+	}
+	// $digits must be a unitless number
+	@if type-of($digits) != number
+	{
+		@warn '#{ $digits } is not a number.';
+		@return $number;
+	}
+	@else if not unitless($digits)
+	{
+		@warn '#{ $digits } has a unit.';
+		@return $number;
+	}
+
+	@for $i from 1 through $digits
+	{
+		$n: $n * 10;
+	}
+
+	@if $mode == round
+	{
+		@return round($number * $n) / $n;
+	}
+	@else if $mode == ceil
+	{
+		@return ceil($number * $n) / $n;
+	}
+	@else if $mode == floor
+	{
+		@return floor($number * $n) / $n;
+	}
+	@else
+	{
+		@warn '#{ $mode } is undefined keyword.';
+		@return $number;
+	}
+}
+/// Map deep get
+/// @author Hugo Giraudel
+/// @access public
+/// @param {Map} $map - Map
+/// @param {Arglist} $keys - Key chain
+/// @return {*} - Desired value
+@function mapDeepGet($map, $keys...)
+{
+	@each $key in $keys
+	{
+		$map: map-get($map, $key);
+	}
+	@return $map;
+}
+@mixin compassHtmlGrid ($prefix:c, $colSize:12, $gridSize:flex)
+{
+	@for $it1 from 1 through $colSize{
+		@for $it2 from 1 through $colSize
+		{
+			$width : decimal-round( ( $it1 * 100 / $colSize ), 1, floor );
+			$height : decimal-round( ( $it2 * 100 / $colSize ), 1, floor );
+
+			@if $it2 == 1
+			{
+				.#{$prefix}-#{$it1}
+				{
+					@extend .compassHtmlColModel;
+					width: 0% + $width;
+				}
+			}
+			.#{$prefix}-#{$it1}-#{$it2}
+			{
+				@extend .compassHtmlColModel;
+				width: 0% + $width;
+				padding-top: 0% + $height;
+			}
+		}
+	}
+}
+$gridName: mapDeepGet($compassGrid, "name");
+$gridName: "c" !default;
+
+$columns: mapDeepGet($compassGrid, "columns");
+$columns: 12 !default;
+
+$gridSize: mapDeepGet($compassGrid, "gridSize");
+$gridSize: flex !default;
+
+$debug: mapDeepGet($compassGrid, "debug");
+$debug: flex !default;
+
+$gutters: mapDeepGet($compassGrid, "gutters");
+$gutters: flex !default;
+
+.compassHtmlColModel{
+	overflow: hidden;
+	position: relative;
+	display: block;
+	float: left;
+	max-width: 100%;
+	@include clearfix();
+	.content{
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		overflow: hidden;
+		margin: $gutters;
+	}
+}
+
+@include compassHtmlGrid( $gridName, $columns, $gridSize );
