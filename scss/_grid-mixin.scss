@@ -70,34 +70,43 @@
 {
 	@for $it1 from 1 through $colSize
 	{
+		.compassHtmlColModelW#{$prefix}-#{$it1}
+		{
+			@extend .compassHtmlColModel;
+			width: getColValue( $it1, $colSize, $gridSize );
+		}
+		.compassHtmlColModelH#{$prefix}-#{$it1}
+		{
+			padding-top: getColValue( $it1, $colSize, $gridSize );
+		}
 		@for $it2 from 1 through $colSize
 		{
 			@if $it2 == 1		
 			{
 				.#{$prefix}-#{$it1}
 				{
-					@extend .compassHtmlColModel;
-					width: getColValue( $it1, $colSize, $gridSize );
+					@extend .compassHtmlColModelW#{$prefix}-#{$it1};
 				}
+
 			}
 			.#{$prefix}-#{$it1}-#{$it2}
 			{
-				@extend .compassHtmlColModel;
-				width: getColValue( $it1, $colSize, $gridSize );
-				padding-top: getColValue( $it2, $colSize, $gridSize );
+				@extend .compassHtmlColModelW#{$prefix}-#{$it1};
+				@extend .compassHtmlColModelH#{$prefix}-#{$it2};
 			}
+			
 			@if $breakpoints != false
 			{
 				@each $breakpoint, $breakpointValue in $breakpoints
 				{				
 					@if $it2 == 1		
 					{
-						.#{$prefix}-#{$breakpoint}-#{$it1}
+						%#{$prefix}-#{$breakpoint}-#{$it1}
 						{
 							@extend .compassHtmlColModel;
 						}
 					}
-					.#{$prefix}-#{$breakpoint}-#{$it1}-#{$it2}
+					%#{$prefix}-#{$breakpoint}-#{$it1}-#{$it2}
 					{
 						@extend .compassHtmlColModel;
 					}
@@ -114,26 +123,34 @@
 			{
 				@for $it1 from 1 through $colSize
 				{
+					.compassHtmlColModelW#{$prefix}-#{$breakpoint}-#{$it1}
+					{
+						width: getColValue( $it1, $colSize, $gridSize );
+					}
+					.compassHtmlColModelH#{$prefix}-#{$breakpoint}-#{$it1}
+					{
+						padding-top: getColValue( $it1, $colSize, $gridSize );
+					}
+
 					@for $it2 from 1 through $colSize
 					{
 						@if $it2 == 1		
 						{
 							.#{$prefix}-#{$breakpoint}-#{$it1}
 							{
-								width: getColValue( $it1, $colSize, $gridSize );
+								@extend .compassHtmlColModelW#{$prefix}-#{$breakpoint}-#{$it1};
 							}
 						}
 						.#{$prefix}-#{$breakpoint}-#{$it1}-#{$it2}
 						{
-							width: getColValue( $it1, $colSize, $gridSize );
-							padding-top: getColValue( $it2, $colSize, $gridSize );
+							@extend .compassHtmlColModelW#{$prefix}-#{$breakpoint}-#{$it1};
+							@extend .compassHtmlColModelH#{$prefix}-#{$breakpoint}-#{$it2};
 						}
 					}
 				}
 			}
 		}
 	}
-	
 }
 $compassGrid:() !default;
 $gridName: mapDeepGet($compassGrid, "name");
