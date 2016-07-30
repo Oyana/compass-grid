@@ -55,27 +55,48 @@
 	}
 	@return $map;
 }
-@mixin compassHtmlGrid ($prefix:c, $colSize:12, $gridSize:flex)
+@mixin compassHtmlGrid ($prefix:c, $colSize:12, $gridSize:flex, $breakpoints:false)
 {
 	@for $it1 from 1 through $colSize{
 		@for $it2 from 1 through $colSize
 		{
-			$width : decimal-round( ( $it1 * 100 / $colSize ), 1, floor );
-			$height : decimal-round( ( $it2 * 100 / $colSize ), 1, floor );
-
-			@if $it2 == 1
+			@if $gridSize == flex
 			{
-				.#{$prefix}-#{$it1}
+				$width : decimal-round( ( $it1 * 100 / $colSize ), 1, floor );
+				$height : decimal-round( ( $it2 * 100 / $colSize ), 1, floor );
+				@if $it2 == 1
+				{
+					.#{$prefix}-#{$it1}
+					{
+						@extend .compassHtmlColModel;
+						width: 0% + $width;
+					}
+				}
+				.#{$prefix}-#{$it1}-#{$it2}
 				{
 					@extend .compassHtmlColModel;
 					width: 0% + $width;
+					padding-top: 0% + $height;
 				}
 			}
-			.#{$prefix}-#{$it1}-#{$it2}
+			@else
 			{
-				@extend .compassHtmlColModel;
-				width: 0% + $width;
-				padding-top: 0% + $height;
+				$width : decimal-round( ( $it1 * $gridSize / $colSize ), 1, floor );
+				$height : decimal-round( ( $it2 * $gridSize / $colSize ), 1, floor );
+				@if $it2 == 1
+				{
+					.#{$prefix}-#{$it1}
+					{
+						@extend .compassHtmlColModel;
+						width: 0rem + $width;
+					}
+				}
+				.#{$prefix}-#{$it1}-#{$it2}
+				{
+					@extend .compassHtmlColModel;
+					width: 0rem + $width;
+					padding-top: 0rem + $height;
+				}
 			}
 		}
 	}
@@ -95,6 +116,8 @@ $debug: flex !default;
 $gutters: mapDeepGet($compassGrid, "gutters");
 $gutters: flex !default;
 
+$breakpoints: mapDeepGet($compassGrid, "gutters");
+
 .compassHtmlColModel{
 	overflow: hidden;
 	position: relative;
@@ -113,4 +136,4 @@ $gutters: flex !default;
 	}
 }
 
-@include compassHtmlGrid( $gridName, $columns, $gridSize );
+@include compassHtmlGrid( $gridName, $columns, $gridSize, breakpoints );
