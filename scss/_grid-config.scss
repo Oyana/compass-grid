@@ -4,7 +4,7 @@ $compassGrid: (
 	gutters: 0.5rem,
 	gridSize: flex, // flex || rem value
 	outputMod: css, // css || extend
-	debug: true,
+	onlyAutoHeightGrid: false,
 	breakpoints: (
 		xs: 480px,
 		sm: 768px,
