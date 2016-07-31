@@ -1,9 +1,10 @@
 $compassGrid: (
 	name:"c",
 	columns: 12,
+	gutters: 0.5rem,
 	gridSize: flex, // flex || rem value
 	outputMod: css, // css || extend
-	debug: true,	
+	debug: true,
 	breakpoints: (
 		xs: 480px,
 		sm: 768px,
@@ -11,3 +12,4 @@ $compassGrid: (
 		lg: 1200px,
 	)
 );
+@include compassGrid( $compassGrid );

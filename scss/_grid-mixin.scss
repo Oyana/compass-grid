@@ -55,37 +55,98 @@
 	}
 	@return $map;
 }
-@function getColValue( $value, $colSize:12, $gridSize:flex )
+@function getColValue( $value, $columns:12, $gridSize:flex )
 {
 	@if $gridSize == flex
 	{
-		@return 0% + decimal-round( ( $value * 100 / $colSize ), 1, floor );
+		@return 0% + decimal-round( ( $value * 100 / $columns ), 1, floor );
 	}
 	@else
 	{
-		@return 0rem + decimal-round( ( $value * $gridSize / $colSize ), 1, floor );
+		@return 0rem + decimal-round( ( $value * $gridSize / $columns ), 1, floor );
 	}
 }
-@mixin compassHtmlGrid ($prefix:c, $colSize:12, $gridSize:flex, $breakpoints:false)
+@mixin compassGrid ( $compassGrid )
 {
-	@for $it1 from 1 through $colSize
+	$compassGrid:() !default;
+	$prefix: mapDeepGet($compassGrid, "name");
+	$prefix: "c" !default;
+
+	$columns: mapDeepGet($compassGrid, "columns");
+	$columns: 12 !default;
+
+	$gridSize: mapDeepGet($compassGrid, "gridSize");
+	$gridSize: flex !default;
+
+	$debug: mapDeepGet($compassGrid, "debug");
+	$debug: false !default;
+
+	$gutters: mapDeepGet($compassGrid, "gutters");
+	$gutters: 0.5rem !default;
+
+	$breakpoints: mapDeepGet($compassGrid, "breakpoints");
+	$breakpoints: false !default;
+
+	$outputMod: mapDeepGet($compassGrid, "outputMod");
+	$outputMod: css !default;
+
+	@if $outputMod == css
 	{
+		$compassGridCharr: "."!global;
+	}
+	@else
+	{
+		$compassGridCharr: "%"!global;
+	}
+	#{$compassGridCharr}compassHtmlColModel, #{$compassGridCharr}compassHtmlColAutoModel{
+		overflow: hidden;
+		position: relative;
+		display: block;
+		float: left;
+		max-width: 100%;
+		@include clearfix();
+		#{$compassGridCharr}content{
+			position: absolute;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			overflow: hidden;
+			margin: $gutters;
+		}
+	}
+	#{$compassGridCharr}compassHtmlColAutoModel{
+		#{$compassGridCharr}content{
+			position: relative;
+			display: block;
+			overflow: hidden;
+			margin: $gutters;
+		}
+	}
+	@for $it1 from 1 through $columns
+	{
+		#{$compassGridCharr}compassHtmlColModelAuto#{$prefix}-#{$it1}
+		{
+			@extend #{$compassGridCharr}compassHtmlColAutoModel;
+			width: getColValue( $it1, $columns, $gridSize );
+		}
 		#{$compassGridCharr}compassHtmlColModelW#{$prefix}-#{$it1}
 		{
 			@extend #{$compassGridCharr}compassHtmlColModel;
-			width: getColValue( $it1, $colSize, $gridSize );
+			width: getColValue( $it1, $columns, $gridSize );
 		}
+		
 		#{$compassGridCharr}compassHtmlColModelH#{$prefix}-#{$it1}
 		{
-			padding-top: getColValue( $it1, $colSize, $gridSize );
+			padding-top: getColValue( $it1, $columns, $gridSize );
 		}
-		@for $it2 from 1 through $colSize
+		@for $it2 from 1 through $columns
 		{
 			@if $it2 == 1		
 			{
 				.#{$prefix}-#{$it1}
 				{
-					@extend #{$compassGridCharr}compassHtmlColModelW#{$prefix}-#{$it1};
+					@extend #{$compassGridCharr}compassHtmlColModelAuto#{$prefix}-#{$it1};
 				}
 
 			}
@@ -103,7 +164,7 @@
 					{
 						#{$compassGridCharr}#{$prefix}-#{$breakpoint}-#{$it1}
 						{
-							@extend #{$compassGridCharr}compassHtmlColModel;
+							@extend #{$compassGridCharr}compassHtmlColAutoModel;
 						}
 					}
 					#{$compassGridCharr}#{$prefix}-#{$breakpoint}-#{$it1}-#{$it2}
@@ -121,24 +182,28 @@
 		{
 			@media(max-width: $breakpointValue)
 			{
-				@for $it1 from 1 through $colSize
+				@for $it1 from 1 through $columns
 				{
+					#{$compassGridCharr}compassHtmlColModelAuto#{$prefix}-#{$breakpoint}-#{$it1}
+					{
+						width: getColValue( $it1, $columns, $gridSize );
+					}
 					#{$compassGridCharr}compassHtmlColModelW#{$prefix}-#{$breakpoint}-#{$it1}
 					{
-						width: getColValue( $it1, $colSize, $gridSize );
+						width: getColValue( $it1, $columns, $gridSize );
 					}
 					#{$compassGridCharr}compassHtmlColModelH#{$prefix}-#{$breakpoint}-#{$it1}
 					{
-						padding-top: getColValue( $it1, $colSize, $gridSize );
+						padding-top: getColValue( $it1, $columns, $gridSize );
 					}
 
-					@for $it2 from 1 through $colSize
+					@for $it2 from 1 through $columns
 					{
 						@if $it2 == 1		
 						{
 							#{$compassGridCharr}#{$prefix}-#{$breakpoint}-#{$it1}
 							{
-								@extend #{$compassGridCharr}compassHtmlColModelW#{$prefix}-#{$breakpoint}-#{$it1};
+								@extend #{$compassGridCharr}compassHtmlColModelAuto#{$prefix}-#{$breakpoint}-#{$it1};
 							}
 						}
 						#{$compassGridCharr}#{$prefix}-#{$breakpoint}-#{$it1}-#{$it2}
@@ -152,51 +217,3 @@
 		}
 	}
 }
-$compassGrid:() !default;
-$gridName: mapDeepGet($compassGrid, "name");
-$gridName: "c" !default;
-
-$columns: mapDeepGet($compassGrid, "columns");
-$columns: 12 !default;
-
-$gridSize: mapDeepGet($compassGrid, "gridSize");
-$gridSize: flex !default;
-
-$debug: mapDeepGet($compassGrid, "debug");
-$debug: flex !default;
-
-$gutters: mapDeepGet($compassGrid, "gutters");
-$gutters: flex !default;
-
-$breakpoints: mapDeepGet($compassGrid, "breakpoints");
-$breakpoints: false !default;
-
-$outputMod: mapDeepGet($compassGrid, "outputMod");
-$outputMod: css !default;
-
-@if $outputMod == css
-{
-	$compassGridCharr: "."!global;
-}
-@else
-{
-	$compassGridCharr: "%"!global;
-}
-#{$compassGridCharr}compassHtmlColModel{
-	overflow: hidden;
-	position: relative;
-	display: block;
-	float: left;
-	max-width: 100%;
-	@include clearfix();
-	#{$compassGridCharr}content{
-		position: absolute;
-		top: 0;
-		left: 0;
-		right: 0;
-		bottom: 0;
-		overflow: hidden;
-		margin: $gutters;
-	}
-}
-@include compassHtmlGrid( $gridName, $columns, $gridSize, $breakpoints );
